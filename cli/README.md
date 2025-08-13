@@ -9,12 +9,17 @@ It will call your real `project_b` modules if present; otherwise, it safely fall
 `python3 -m venv .venv`
 `source .venv/bin/activate`
 `pip install -e .`
+`pip install --upgrade setuptools`
 
 ### Then Run: `pb hello` (from root directory)
 
 ## **File Structure**
 
 ```
+setup.py
+pyproject.toml
+__init__.py
+
 cli/
 ├── README.md
 ├── __init__.py
