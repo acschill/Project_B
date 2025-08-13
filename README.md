@@ -11,7 +11,7 @@ Project B is an independent agent architecture designed for low-cost devices (e.
 - **Global Synthesis (AEI3 (Awareness Engine Internal State 3 — Responsive Awareness))** for “workspace ignition” when thresholds are met.
 - **EAE (Emotional Awareness Engine)** as a mixture‑of‑experts (Appraisal/OCC (Ortony–Clore–Collins)+EMA (Emotion and Adaptation), Dimensional PAD (aka y'all need jesus))/VA, ACT (Affect Control Theory)/BayesACT (Bayesian Affect Control Theory), Constructionist & interoceptive active‑inference, RL/active‑inference) returning a canonical **ESV (Emotional State Vector)** (Emotional State Vector). Toggle via `emotion.enabled`.
 
-## Build
+### Build
 ```bash
 cargo clean
 cargo check
@@ -19,29 +19,29 @@ cargo build --release
 ```
 > The build script compiles C++ kernels with NEON-friendly flags when supported.
 
-## Run Demo
+### Run Demo
 ```bash
 cargo run --release --bin project_b
 ```
 Outputs PWPE, EVC, EVC′, and ESV (if emotion enabled).
 
-## If you’ll build on your dev machine and deploy to Pi (cross-compile):
+### If you’ll build on your dev machine and deploy to Pi (cross-compile):
 `rustup target add aarch64-unknown-linux-gnu`
-# Install a cross linker/toolchain on your dev box:
-# Ubuntu/Debian:
+### Install a cross linker/toolchain on your dev box:
+### Ubuntu/Debian:
 `sudo apt-get install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu`
-# macOS (Homebrew): 
+### macOS (Homebrew): 
 `brew install aarch64-linux-gnu-binutils aarch64-linux-gnu-gcc`
 
-## If you build directly on the RPI5 (64-bit OS)
+### If you build directly on the RPI5 (64-bit OS)
 `curl https://sh.rustup.rs -sSf | sh`
 `rustup default stable`
 `rustup component add rustfmt clippy`
 
-## Toggle Emotion
+### Toggle Emotion
 Edit `config/aei_policies.yaml` → `emotion.enabled: false` to disable the EAE.
 
-## Where to Start
+### Where to Start
 - Rust control plane: `src/`
 - C++ kernels: `src/cpp/` (exposed via `cxx` bridge)
 - Spec: `docs/Project_B_Technical_Overview.md`
