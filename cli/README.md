@@ -1,0 +1,204 @@
+# Project B CLI
+
+The **Project B CLI** (`pb`) provides complete run, inspect, and debug coverage for AEI (Awareness Engine Internal), IM (Internal Monologue), and MM (Memory Management).  
+It will call your real `project_b` modules if present; otherwise, it safely falls back to stubs so you can wire components incrementally.
+
+---
+
+## **File Structure**
+
+```
+cli/
+├── README.md
+├── __init__.py
+├── common.py
+├── interactive.py
+├── main.py
+└── commands/
+    ├── __init__.py
+    ├── aei.py
+    ├── cache.py
+    ├── config.py
+    ├── diag.py
+    ├── im.py
+    ├── logs.py
+    ├── mm.py
+    ├── profile.py
+    ├── run.py
+    ├── shell.py
+    ├── state.py
+    ├── test.py
+    └── trace.py
+```
+
+---
+
+## **Global CLI Flags**
+
+Available on all commands:
+
+| Flag | Description |
+|------|-------------|
+| `--config PATH` | Use specific config file |
+| `--log-level {DEBUG,INFO,WARN,ERROR}` | Override logging level |
+| `--json` | Output JSON instead of human-readable |
+| `--no-color` | Disable ANSI colors |
+| `--cwd PATH` | Run relative to working directory |
+| `--profile-cpu` | Profile CPU usage for the invoked command |
+| `--trace` | Enable tracing for invoked command |
+
+**Exit Codes**
+- `0` success
+- `1` generic error
+- `2` bad args/config
+- `3` dependency/env issue
+- `4` health check failed
+- `5` tests failed
+
+---
+
+## **Command Set**
+
+### **1. Run & Process Control**
+- `pb run start [--foreground | --daemon] [--pipeline AEI|IM|MM|ALL] [--once]` — start service or single iteration.
+- `pb run stop` — stop daemonized service.
+- `pb run status [--verbose]` — show running components, PIDs, queues, last error.
+- `pb run reload` — hot-reload config and rotate logs.
+
+### **2. Config Management**
+- `pb config show [--effective] [--sources]` — show merged config and search paths.
+- `pb config get KEY` — get value by dot path.
+- `pb config set KEY VALUE [--persist]` — set a config value; optionally persist.
+- `pb config validate [--strict]` — validate against schema.
+
+### **3. Diagnostics & Environment**
+- `pb diag doctor` — run full env/deps/health check.
+- `pb diag health` — live status of AEI/IM/MM.
+- `pb diag smoke` — quick end-to-end with synthetic input.
+- `pb diag env` — environment summary.
+- `pb diag deps [--fix]` — verify or install dependencies.
+
+### **4. Tracing & Profiling**
+- `pb trace enable [--component AEI|IM|MM|ALL]`
+- `pb trace disable [--component ...]`
+- `pb trace export PATH [--format chrome|speedscope|json]` — export traces.
+- `pb profile cpu [--seconds N] --out PATH`
+- `pb profile mem [--seconds N] --out PATH`
+
+### **5. Logs**
+- `pb logs tail [--component AEI|IM|MM|ALL] [--follow] [--since "5m"] [--grep REGEX]`
+- `pb logs level {DEBUG,INFO,WARN,ERROR} [--component ...]`
+- `pb logs export PATH [--since ...] [--component ...]`
+
+### **6. AEI: Stepwise Awareness**
+- `pb aei step --from INPUT --to OUTPUT --stage 1|2|3 [--trace-input]`
+- `pb aei inspect --stage 1|2|3 [--last | --id ID]`
+- `pb aei state` — counters, errors, latencies.
+
+### **7. IM: Internal Monologue**
+- `pb im run --input AEI_OUTPUT --to DECISION_PATH [--strategy default|ablation:<flag>]`
+- `pb im queue [--peek N] [--drain]`
+- `pb im inspect --id ID`
+
+### **8. MM: Memory Management**
+**Short-Term**
+- `pb mm st get --key KEY`
+- `pb mm st set --key KEY --value VALUE [--ttl SECONDS]`
+- `pb mm st list [--prefix PFX]`
+- `pb mm st clear [--prefix PFX | --all]`
+
+**Long-Term**
+- `pb mm lt search --query "..." [--limit N]`
+- `pb mm lt add --doc PATH --tags TAGS`
+- `pb mm lt rebuild-index`
+- `pb mm lt export PATH [--filter TAG]`
+
+### **9. Cache Control**
+- `pb cache list`
+- `pb cache clear [--name NAME | --all]`
+- `pb cache warm [--name NAME]`
+
+### **10. State & Lifecycle**
+- `pb state snapshot --out PATH`
+- `pb state export --out DIR`
+- `pb state import --from DIR`
+- `pb state reset [--soft | --hard]`
+
+### **11. Testing**
+- `pb test unit [--pattern "test_*.py"]`
+- `pb test integration [--name NAME]`
+- `pb test all`
+
+### **12. Shell / Interactive REPL**
+- `pb shell` — enter interactive mode with tab-completion.
+
+### **13. Version**
+- `pb version` — prints CLI + component versions.
+
+---
+
+## **Typical Debugging Workflows**
+
+### **AEI Stage Regression**
+1. `pb logs level DEBUG --component AEI`  
+2. `pb aei step --from sample/raw_input.json --to out/aei1.json --stage 1 --trace-input`  
+3. `pb aei inspect --stage 1 --last`  
+4. `pb trace enable --component AEI`  
+5. `pb run start --pipeline AEI --once --trace`  
+6. `pb trace export traces/aei.trace --format speedscope`
+
+### **Memory Index Issues**
+1. `pb mm lt rebuild-index`  
+2. `pb mm lt search --query "deadline"`  
+3. `pb cache clear --name embeddings`  
+4. `pb diag health`
+
+### **End-to-End Smoke After a Hotfix**
+1. `pb run reload`  
+2. `pb diag smoke`  
+3. `pb test integration --name e2e_default`  
+4. `pb state snapshot --out snapshots/pre_release_<date>.tar.gz`
+
+---
+
+## **8-Step Quickstart**
+
+1. **Start service for one iteration**  
+   `pb run start --once --pipeline AEI --log-level DEBUG`
+
+2. **View config**  
+   `pb config show --sources`  
+   `pb config get mm.lt.index_dir`
+
+3. **Run diagnostics**  
+   `pb diag env`  
+   `pb diag deps`  
+   `pb diag health`  
+   `pb diag smoke`  
+   `pb diag doctor`
+
+4. **Enable trace & profile**  
+   `pb trace enable --component AEI`  
+   `pb run start --once --trace`  
+   `pb trace export var/traces/aei.speedscope --format speedscope`  
+   `pb profile cpu --seconds 10 --out var/profiles/cpu.prof`
+
+5. **Work with logs**  
+   `pb logs tail --since 5m`  
+   `pb logs export var/logs/all.log`
+
+6. **Debug AEI pipeline**  
+   `pb aei step --stage 1 --from samples/raw.json --to out/aei1.json --trace-input`  
+   `pb aei step --stage 2 --from out/aei1.json --to out/aei2.json`  
+   `pb aei step --stage 3 --from out/aei2.json --to out/aei3.json`  
+   `pb aei inspect --stage 1 --last`
+
+7. **Manage memory**  
+   `pb mm st set session:last_user "alex"`  
+   `pb mm st get session:last_user`  
+   `pb mm lt add --doc README.md --tags demo,readme`  
+   `pb mm lt search --query readme --limit 5`
+
+8. **Smoke test & snapshot**  
+   `pb test integration --name e2e_default || true`  
+   `pb state snapshot --out snapshots/pre_release_<date>.zip`
