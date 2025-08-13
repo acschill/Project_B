@@ -1,0 +1,39 @@
+aei:
+  thresholds:
+    theta1_pwpe: 0.70
+    theta2_conf: 0.85
+    theta3_ignite: 0.90
+  budgets:
+    aei1: { QU: 1.0,  EU: 1.0,  spatial_pct: 0.00 }
+    aei2: { QU: 10.0, EU: 8.0,  spatial_pct: 0.05, burst_seconds: 5 }
+    aei3: { QU: 25.0, EU: 15.0, spatial_pct: 0.00, wave_seconds: 10 }
+  control:
+    evc:
+      alpha: 1.0
+      beta:  1.0
+      gamma: 0.1
+      value_model: "task_value * expected_error_reduction"
+    adaptive_gain:
+      target_zone: "inverted_U_mid"
+      feedback_vars: ["latency_ms","error_rate","pupil_proxy"]
+
+emotion:
+  enabled: true
+  router:
+    use_pad_as_canonical: true
+    weights: { appraisal: 0.35, act: 0.35, dimensional: 0.20, constructed: 0.05, rl_activeinf: 0.05 }
+    switch:
+      human_interaction_bias: 0.25
+      low_budget_bias_dimensional: 0.30
+  pad_decay: 0.10
+  evc_modulation:
+    k_arousal: 0.10
+    k_social:  0.15
+    k_goal:    0.10
+    cap:       0.25
+
+memory:
+  aei2_topk_stm: 5
+  aei2_fallback_ltm_topk: 3
+  aei3_relation_radius: 2
+  aei3_temporal_windows: [-3,-2,-1,0,1,2,3]

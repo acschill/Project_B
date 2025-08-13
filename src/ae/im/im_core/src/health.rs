@@ -1,0 +1,1 @@
+#[derive(Debug)] pub enum HealthStatus { Ok, Warn(&'static str), Error(&'static str) }

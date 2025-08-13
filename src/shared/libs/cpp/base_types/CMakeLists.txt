@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.15)
+project(project_b_base_types LANGUAGES CXX)
+add_library(project_b_base_types INTERFACE)
+target_include_directories(project_b_base_types INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_compile_features(project_b_base_types INTERFACE cxx_std_17)

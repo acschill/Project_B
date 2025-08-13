@@ -1,0 +1,10 @@
+syntax = "proto3";
+package projectb.mm_st;
+message Envelope {
+  uint64 seq_no = 1;
+  uint64 ts_mono_ns = 2;
+  uint32 schema_ver = 3;
+  uint32 source_id = 4;
+  bytes  payload = 5;
+  uint32 checksum = 6;
+}

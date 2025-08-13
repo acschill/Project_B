@@ -1,0 +1,1 @@
+//! Rust<->C++ bridge stubs

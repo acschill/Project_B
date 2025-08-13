@@ -1,0 +1,59 @@
+[workspace]
+resolver = "2"
+members = [
+  # shared lib
+  "src/shared/libs/rust/base_types",
+  # AE
+  "src/ae/core",
+  "src/ae/im/im_core",
+  "src/ae/im/imd",
+  "src/ae/sa/sa",
+  "src/ae/ta/ta",
+  "src/ae/dec/dec",
+  "src/ae/ea/ea",
+  # MM
+  "src/mm/st",
+  "src/mm/lt",
+]
+
+# If some of these dirs don't have a Cargo.toml yet, TEMPORARILY remove them
+# from 'members' (or add them later after you extract the scaffolds).
+
+# Optional: make the root a crate too (matches your src/lib.rs + build.rs)
+[package]
+name = "project_b"
+version = "0.1.0"
+edition = "2021"
+build = "build.rs"
+default-run = "project_b"
+
+[features]
+with_protos = []
+
+[dependencies]
+project_b_base_types = { path = "src/shared/libs/rust/base_types" }
+protoc = "2.28.0"
+time = "0.3"
+
+[build-dependencies]
+prost-build = "0.14.1"
+
+# Shared defaults every member can inherit
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+
+# Centralize common deps so member crates can just write `foo.workspace = true`
+[workspace.dependencies]
+anyhow = "1"
+thiserror = "1"
+tokio = { version = "1", features = ["rt-multi-thread","macros","time","sync"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["fmt","env-filter"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+bytes = "1"
+crc32fast = "1"
+project_b_base_types = { path = "src/shared/libs/rust/base_types", features = ["serde"] }
+

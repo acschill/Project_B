@@ -1,0 +1,124 @@
+%%{init: {'theme':'neutral','themeVariables': {'background':'#ffffff'}}}%%
+%% Project B Architecture (Rust control plane + C++ kernels + EAE)
+flowchart TD
+  %% ===== Styles =====
+  classDef rust fill:#e8f5e9,stroke:#2e7d32,stroke-width:1px,color:#1b5e20;
+  classDef cpp fill:#e3f2fd,stroke:#1565c0,stroke-width:1px,color:#0d47a1;
+  classDef data fill:#fff8e1,stroke:#f57f17,stroke-width:1px,color:#e65100;
+  classDef cfg fill:#ede7f6,stroke:#5e35b1,stroke-width:1px,color:#4527a0;
+  classDef log fill:#fff3e0,stroke:#ef6c00,stroke-width:1px,color:#e65100;
+  classDef aei fill:#f3e5f5,stroke:#6a1b9a,stroke-width:1px,color:#4a148c;
+  classDef eae fill:#fce4ec,stroke:#ad1457,stroke-width:1px,color:#880e4f;
+
+  %% ===== Inputs & Normalization =====
+  subgraph Inputs["Inputs & Normalization"]
+    IA["IA (Input Adapters)\n(Rust)"]:::rust
+    QR["QR (Quick Recognition)\n(Rust)"]:::rust
+  end
+
+  %% ===== AEI core =====
+  subgraph AEI["AEI (Awareness Engine Internal) — Three States"]
+    AEI1["AEI1 (Base Awareness)\nPWPE monitor → PFB + TSIG\noptional ESV"]:::aei
+    AEI2["AEI2 (Escalated Awareness)\n+5% SEB halo; active sensing\nbuild EH"]:::aei
+    AEI3["AEI3 (Responsive Awareness)\nGlobal synthesis; AV"]:::aei
+  end
+
+  %% ===== Emotional Awareness Engine =====
+  subgraph EAE["EAE (Emotional Awareness Engine)"]
+    Router["EAE Router (Rust)"]:::eae
+    FFI["cxx::bridge FFI\n(Rust ↔ C++)"]:::rust
+    subgraph Kernels["C++ kernels (SIMD/NEON)"]
+      PAD["Dimensional PAD"]:::cpp
+      APP["Appraisal OCC/EMA"]:::cpp
+      ACT["ACT/BayesACT"]:::cpp
+      CONSTR["Constructionist / Interoceptive"]:::cpp
+      RL["RL / Active-Inference"]:::cpp
+    end
+  end
+
+  %% ===== Control Plane =====
+  subgraph ControlPlane["Control Plane (Rust)"]
+    IM["IM (Internal Monologue)"]:::rust
+    SA["SA (Situation Assessment)"]:::rust
+    DEC["DEC (Decision Engine)\nEVC / EVC′ gating"]:::rust
+    TA["TA (Task Allocation)"]:::rust
+    MM["MM (Memory Management)\nSTM/LTM; emotion tags"]:::rust
+    EA["EA (Event Audit)"]:::log
+  end
+
+  %% ===== Data & Transforms =====
+  subgraph DataArtifacts["Data & Transforms"]
+    A1["Project A: transformation_matrices"]:::data
+    A2["Project A: proof_graph"]:::data
+  end
+
+  %% ===== Config =====
+  subgraph Config["Configuration"]
+    CFG["aei_policies.yaml\nthresholds, budgets, emotion.enabled"]:::cfg
+    ADAPTERS["adapters.yaml / sensor_map.json"]:::cfg
+  end
+
+  %% ===== Flows =====
+  ADAPTERS -->|binds| IA
+  IA --> AEI1
+  QR --> AEI1
+  CFG --> AEI1
+  CFG --> AEI2
+  CFG --> AEI3
+  CFG --> Router
+  CFG --> DEC
+
+  AEI1 -->|PWPE ≥ θ1 & EVC′ > 0| AEI2
+  AEI2 -->|EH.conf ≥ θ2 & EVC′ > 0| IM
+  AEI2 -->|unresolved| AEI3
+  AEI3 -->|AV + summary| IM
+
+  %% IM/DEC/TA loop
+  IM --> DEC
+  SA --> DEC
+  DEC --> TA
+  TA --> MM
+
+  %% Audit
+  AEI1 --> EA
+  AEI2 --> EA
+  AEI3 --> EA
+  IM --> EA
+  DEC --> EA
+
+  %% Memory interactions
+  MM --> AEI2
+  MM --> AEI3
+
+  %% Project A usage
+  A1 -->|apply transforms| AEI3
+  A2 -->|context graph| AEI3
+
+  %% EAE routing (optional via emotion.enabled)
+  AEI1 -. optional .-> Router
+  AEI2 -. appraisal/ACT .-> Router
+  AEI3 -. fusion/updates .-> Router
+
+  Router --> FFI
+  FFI --> PAD
+  FFI --> APP
+  FFI --> ACT
+  FFI --> CONSTR
+  FFI --> RL
+  PAD --> Router
+  APP --> Router
+  ACT --> Router
+  CONSTR --> Router
+  RL --> Router
+
+  ESV["ESV (Emotional State Vector)"]:::eae
+  Router -->|fuse PAD outputs| ESV
+  ESV --> AEI1
+  ESV --> AEI2
+  ESV --> AEI3
+  ESV --> IM
+  ESV --> DEC
+  ESV --> MM
+
+  %% Edge labels to emphasize gating & toggles
+  CFG -. emotion_enabled .-> Router

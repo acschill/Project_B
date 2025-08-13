@@ -1,0 +1,15 @@
+[package]
+name = "project_b_base_types"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "Shared base types for Project_B (Rust)."
+
+[features]
+# Enable serde by default so downstream crates get derives without extra config
+default = ["serde"]
+
+[dependencies]
+serde = { version = "1", features = ["derive"], optional = true }
+time = "0.3"
+prost-build = "0.14.1"

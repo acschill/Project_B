@@ -1,0 +1,6 @@
+salience:
+  safety: 1.0
+  task_progress: 0.6
+  novelty: 0.4
+relations:
+  neighbor_radius: 2

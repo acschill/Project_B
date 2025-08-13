@@ -1,0 +1,4 @@
+adapters:
+  mic: { type: audio, rate_hz: 16 }
+  camera: { type: vision, rate_hz: 10 }
+  syslog: { type: text, rate_hz: 2 }

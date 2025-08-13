@@ -1,0 +1,5 @@
+{
+  "audio_stream": "mic",
+  "video_stream": "camera",
+  "text_stream": "syslog"
+}
