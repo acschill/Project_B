@@ -5,12 +5,12 @@ It will call your real `project_b` modules if present; otherwise, it safely fall
 
 ---
 
-## Quick Install
-`cd ./cli/setup_cli.sh`
-`chmod +x ./cli/setup_cli.sh`
-`./setup_cli.sh`
+## Quick Install (from root directory)
+`python3 -m venv .venv`
+`source .venv/bin/activate`
+`pip install -e .`
 
-### Then Run: `pb hello`
+### Then Run: `pb hello` (from root directory)
 
 ## **File Structure**
 

@@ -1,2 +1,2 @@
-[project.scripts]
-pb = "cli.main:main"
+[entry_points.console_scripts]
+pb = "pb=cli.main:main"
