@@ -1,5 +1,5 @@
 # Project B
-# (Name to be updated, 'B' literally only meant the letter after 'A', referring to the first & other Program A)
+### (Name to be updated, 'B' literally only meant the letter after 'A', referring to the first & other Program A)
 
 ## General Overview
 Project B is an independent agent architecture designed for low-cost devices (e.g., Raspberry Pi 5). The control plane is implemented in **Rust** (state machines, scheduling, budgets, messaging), while performance‑critical emotional inference and math kernels are implemented in **C++** and exposed to Rust via a safe FFI (Foreign Function Interface) boundary using the `cxx` crate. The system maintains a low‑overhead **base awareness**, escalates effort on **precision‑weighted prediction errors (PWPE (Precision‑Weighted Prediction Error))** when warranted by **Expected Value of Control (EVC (Expected Value of Control))**, globally integrates context when ignition criteria are met, and optionally models **emotional awareness** with a multi‑model **Emotional Awareness Engine (EAE (Emotional Awareness Engine))** that can be disabled via config.
