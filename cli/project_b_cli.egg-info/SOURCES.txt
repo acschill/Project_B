@@ -1,0 +1,15 @@
+README.md
+setup.py
+Project_B_cli.egg-info/PKG-INFO
+Project_B_cli.egg-info/SOURCES.txt
+Project_B_cli.egg-info/dependency_links.txt
+Project_B_cli.egg-info/entry_points.txt
+Project_B_cli.egg-info/requires.txt
+Project_B_cli.egg-info/top_level.txt
+commands/__init__.py
+project_b_cli.egg-info/PKG-INFO
+project_b_cli.egg-info/SOURCES.txt
+project_b_cli.egg-info/dependency_links.txt
+project_b_cli.egg-info/entry_points.txt
+project_b_cli.egg-info/requires.txt
+project_b_cli.egg-info/top_level.txt

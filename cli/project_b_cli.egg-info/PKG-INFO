@@ -1,3 +1,34 @@
+Metadata-Version: 2.4
+Name: project_b_cli
+Version: 0.1.0
+Summary: Command-line interface for Project B with full AEI/IM/MM debug and diagnostic capabilities
+Home-page: 
+Author: Alex Schill
+Author-email: 
+Project-URL: Bug Tracker, 
+Project-URL: Documentation, 
+Project-URL: Source Code, 
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Environment :: Console
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Software Development :: Libraries :: Application Frameworks
+Classifier: Topic :: Utilities
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: typer[all]>=0.9.0
+Requires-Dist: pyyaml>=6.0
+Requires-Dist: rich>=13.0.0
+Dynamic: author
+Dynamic: classifier
+Dynamic: description
+Dynamic: description-content-type
+Dynamic: project-url
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
+
 # Project B CLI
 
 The **Project B CLI** (`pb`) provides complete run, inspect, and debug coverage for AEI (Awareness Engine Internal), IM (Internal Monologue), and MM (Memory Management).  
